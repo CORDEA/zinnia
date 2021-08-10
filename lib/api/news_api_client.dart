@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:zinnia/api/response.dart';
 
-final newsApiClient = Provider((_) => NewsApiClient());
+final newsApiClientProvider = Provider((_) => NewsApiClient());
 
 class NewsApiClient {
   static const _authority = 'newsapi.org';
@@ -10,14 +13,15 @@ class NewsApiClient {
   static const _topHeadlines = '/v2/top-headlines';
   static const _sources = '/v2/top-headlines/sources';
 
-  Future<http.Response> getEverything() async {
+  Future<News> getEverything() async {
     final query = {
       'apiKey': dotenv.env['API_KEY']!,
     };
-    return http.get(Uri.https(_authority, _everything, query));
+    final response = await http.get(Uri.https(_authority, _everything, query));
+    return News.fromJson(jsonDecode(response.body));
   }
 
-  Future<http.Response> getTopHeadlines({
+  Future<News> getTopHeadlines({
     required String category,
     required String source,
   }) async {
@@ -26,16 +30,19 @@ class NewsApiClient {
       'sources': source,
       'category': category,
     };
-    return http.get(Uri.https(_authority, _topHeadlines, query));
+    final response =
+        await http.get(Uri.https(_authority, _topHeadlines, query));
+    return News.fromJson(jsonDecode(response.body));
   }
 
-  Future<http.Response> getSources({
+  Future<Sources> getSources({
     required String category,
   }) async {
     final query = {
       'apiKey': dotenv.env['API_KEY']!,
       'category': category,
     };
-    return http.get(Uri.https(_authority, _sources, query));
+    final response = await http.get(Uri.https(_authority, _sources, query));
+    return Sources.fromJson(jsonDecode(response.body));
   }
 }
