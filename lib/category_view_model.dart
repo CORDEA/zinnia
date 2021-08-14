@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:zinnia/repository/source_repository.dart';
+import 'package:zinnia/api/response.dart';
 
-final categoryViewModelProvider = ChangeNotifierProvider(
-  (ref) => CategoryViewModel(ref.watch(sourceRepositoryProvider))..init(),
+final categoryViewModelProvider =
+    ChangeNotifierProvider.family<CategoryViewModel, List<Source>>(
+  (ref, sources) => CategoryViewModel(sources)..init(),
 );
 
 class CategoryViewModel extends ChangeNotifier {
-  CategoryViewModel(this._sourceRepository);
+  CategoryViewModel(this._sources);
 
-  final SourceRepository _sourceRepository;
+  final List<Source> _sources;
+
+  List<CategoryItemViewModel> _items = [];
+
+  List<CategoryItemViewModel> get items => _items;
 
   @visibleForTesting
-  Future<void> init() async {
+  void init() {
+    _items = _sources
+        .map((e) => CategoryItemViewModel(title: e.name))
+        .toList(growable: false);
+    notifyListeners();
   }
+}
+
+class CategoryItemViewModel {
+  CategoryItemViewModel({required this.title});
+
+  final String title;
 }
