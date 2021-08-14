@@ -39,7 +39,7 @@ class Article {
   final String url;
   final String urlToImage;
   final String publishedAt;
-  final String content;
+  final String? content;
 
   factory Article.fromJson(Map<String, dynamic> json) =>
       _$ArticleFromJson(json);
@@ -54,7 +54,7 @@ class ArticleSource {
     required this.name,
   });
 
-  final String id;
+  final String? id;
   final String name;
 
   factory ArticleSource.fromJson(Map<String, dynamic> json) =>
