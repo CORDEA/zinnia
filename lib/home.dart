@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:zinnia/category.dart';
 import 'package:zinnia/news.dart';
 
 import 'home_view_model.dart';
@@ -25,7 +26,20 @@ class HomePage extends HookConsumerWidget {
                 ),
               )
             : AppBar(title: const Text('Home')),
-        body: const NewsPage(),
+        body: HookConsumer(
+          builder: (context, ref, child) {
+            final index = ref.watch(
+              homeViewModelProvider.select((value) => value.navigationIndex),
+            );
+            switch (index) {
+              case 0:
+                return const NewsPage();
+              case 1:
+                return const _HomeTabBarView();
+            }
+            throw StateError('Receives illegal index.');
+          },
+        ),
         bottomNavigationBar: HookConsumer(
           builder: (context, ref, child) => BottomNavigationBar(
             currentIndex: ref.watch(
@@ -46,6 +60,20 @@ class HomePage extends HookConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _HomeTabBarView extends HookConsumerWidget {
+  const _HomeTabBarView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tabs = ref.watch(
+      homeViewModelProvider.select((value) => value.tabSources),
+    );
+    return TabBarView(
+      children: tabs.map((e) => CategoryPage(sources: e)).toList(),
     );
   }
 }
