@@ -10,6 +10,6 @@ class SourceRepository {
 
   final NewsApiClient _apiClient;
 
-  Future<Sources> find({required String category}) =>
-      _apiClient.getSources(category: category);
+  Future<Sources> find({required String country, String? category}) =>
+      _apiClient.getSources(country: country, category: category);
 }

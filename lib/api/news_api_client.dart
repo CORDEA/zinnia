@@ -38,11 +38,13 @@ class NewsApiClient {
   }
 
   Future<Sources> getSources({
-    required String category,
+    required String country,
+    String? category,
   }) async {
-    final query = {
+    final query = <String, String>{
       'apiKey': dotenv.env['API_KEY']!,
-      'category': category,
+      'country': country,
+      ...(category == null ? {} : {'category': category}),
     };
     final response = await http.get(Uri.https(_authority, _sources, query));
     return Sources.fromJson(jsonDecode(response.body));
