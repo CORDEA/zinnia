@@ -22,13 +22,15 @@ class NewsApiClient {
   }
 
   Future<News> getTopHeadlines({
-    required String category,
-    required String source,
+    required String country,
+    String? category,
+    String? source,
   }) async {
-    final query = {
+    final query = <String, String>{
       'apiKey': dotenv.env['API_KEY']!,
-      'sources': source,
-      'category': category,
+      'country': country,
+      ...(source == null ? {} : {'sources': source}),
+      ...(category == null ? {} : {'category': category}),
     };
     final response =
         await http.get(Uri.https(_authority, _topHeadlines, query));

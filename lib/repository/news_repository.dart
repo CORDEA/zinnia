@@ -12,6 +12,14 @@ class NewsRepository {
 
   Future<News> findAll() => _apiClient.getEverything();
 
-  Future<News> find({required String category, required String source}) =>
-      _apiClient.getTopHeadlines(category: category, source: source);
+  Future<News> find({
+    required String country,
+    String? category,
+    String? source,
+  }) =>
+      _apiClient.getTopHeadlines(
+        country: country,
+        category: category,
+        source: source,
+      );
 }
